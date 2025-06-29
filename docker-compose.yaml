@@ -1,0 +1,70 @@
+version: "3.8"
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: mariko745076
+      MYSQL_DATABASE: examen_db
+      MYSQL_USER: mariko
+      MYSQL_PASSWORD: mariko745076
+    ports:
+      - "3308:3306"
+    networks:
+      - examen_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  eureka-server:
+    image: eureka-server:1.0
+    container_name: eureka-server
+    ports:
+      - "8762:8762"
+    networks:
+      - examen_network
+  api-gateway:
+    image: api-gateway:1.0
+    container_name: api-gateway
+    ports:
+      - "9090:9090"
+    networks:
+      - examen_network
+    depends_on:
+      - eureka-server
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8762/eureka/
+  stagiaire-service:
+    image: stagiaire-service:1.0
+    container_name: stagiaire-service
+    ports:
+      - "9091:9091"
+    networks:
+      - examen_network
+    depends_on:
+      - mysql
+      - eureka-server
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8762/eureka/
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/examen_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: mariko
+      SPRING_DATASOURCE_PASSWORD: mariko745076
+  encadreur-service:
+    image: encadreur-service:1.0
+    container_name: encadreur-service
+    ports:
+      - "9092:9092"
+    networks:
+      - examen_network
+    depends_on:
+      - mysql
+      - eureka-server
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8762/eureka/
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/examen_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: mariko
+      SPRING_DATASOURCE_PASSWORD: mariko745076
+networks:
+  examen_network:
+    driver: bridge

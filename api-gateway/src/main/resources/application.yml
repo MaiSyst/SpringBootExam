@@ -1,0 +1,26 @@
+server:
+  port: 9090
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      server:
+        webmvc:
+          routes:
+            - id: encadreur-service
+              uri: lb://ENCADREUR-SERVICE
+              predicates:
+                - Path=/api/encadreurs/**
+            - id: stagiaire-service
+              uri: lb://STAGIAIRE-SERVICE
+              predicates:
+                - Path=/api/stagiaires/**
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8762/eureka/
