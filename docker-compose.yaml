@@ -18,14 +18,14 @@ services:
       timeout: 5s
       retries: 3
   eureka-server:
-    image: eureka-server:1.0
+    image: zorion90/eureka-server:1.0
     container_name: eureka-server
     ports:
       - "8762:8762"
     networks:
       - examen_network
   api-gateway:
-    image: api-gateway:1.0
+    image: zorion90/api-gateway:1.0
     container_name: api-gateway
     ports:
       - "9090:9090"
@@ -36,7 +36,7 @@ services:
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8762/eureka/
   stagiaire-service:
-    image: stagiaire-service:1.0
+    image: zorion90/stagiaire-service:1.0
     container_name: stagiaire-service
     ports:
       - "9091:9091"
@@ -51,7 +51,7 @@ services:
       SPRING_DATASOURCE_USERNAME: mariko
       SPRING_DATASOURCE_PASSWORD: mariko745076
   encadreur-service:
-    image: encadreur-service:1.0
+    image: zorion90/encadreur-service:1.0
     container_name: encadreur-service
     ports:
       - "9092:9092"
